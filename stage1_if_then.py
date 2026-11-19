@@ -9,7 +9,7 @@ Quit it:  type  bye
 
 from safety import check_safety   # a safety net added by your teacher. Leave it.
 
-BOT_NAME = "Dr. Byte"   # TODO 1: give your bot a name
+BOT_NAME = "Janus"   # TODO 1: give your bot a name
 
 print(f"{BOT_NAME}: Hello. Tell me what is on your mind. (type 'bye' to leave)")
 
@@ -33,6 +33,12 @@ while True:
         print(f"{BOT_NAME}: Tell me more about school.")
     # TODO 2: add at least 3 more `elif` rules about topics YOU choose.
     # TODO 3: make one of your rules react to TWO different words (use `or`).
+    elif "music" in user_input or "song" in user_input:
+        print(f"{BOT_NAME}: What song should I add to the flight playlist?")
+    elif "books" in user_input:
+        print(f"{BOT_NAME}: What book would you bring on a long flight?")
+    elif "space" in user_input:
+        print(f"{BOT_NAME}: What would you visit first if you had a spaceship?")
     else:
         print(f"{BOT_NAME}: Please go on.")
 
@@ -43,5 +49,7 @@ while True:
 # Run the bot and type:   this is hard
 # Why does the bot say "Hello!"?  (Hint: what does `"hi" in "this"` give you?)
 # Write your guess here:
+# Answer: "hi" in "this" is True. The greeting checks for a substring,
+# so it matches those two letters even though "hi" is not a separate word.
 #
 # We will fix this properly in Stage 2 by breaking the sentence into WORDS.

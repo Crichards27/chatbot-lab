@@ -23,7 +23,8 @@ from stage2_word_lists import clean_words
 from stage3_important_word import find_important_word
 from stage4_topics_memory import find_topic, get_reply as rules_reply
 
-N = 2   # TODO 3: change to 3 (trigrams). What happens to the sentences?
+N = 3   # TODO 3: change to 3 (trigrams). What happens to the sentences?
+USE_MOST_COMMON = False   # Set to True to try the TODO 1 challenge in the chat.
 
 
 def load_corpus(path="corpus.txt"):
@@ -71,7 +72,10 @@ def generate(model, n=2, seed=None, max_words=14):
         options = model.get(context)
         if not options:
             break
-        next_word = random.choice(options)     # TODO 1: see the challenge below
+        if USE_MOST_COMMON:     # TODO 1: see the challenge below
+            next_word = Counter(options).most_common(1)[0][0]
+        else:
+            next_word = random.choice(options)
         if next_word == "<end>":
             break
         sentence.append(next_word)
@@ -125,6 +129,8 @@ if __name__ == "__main__":
 #   `options` contains repeats, so common words ARE more likely. Try picking
 #   the MOST COMMON next word every time instead (hint: Counter(options)
 #   .most_common(1)). What happens to the bot? Why is it boring now?
+# Answer: From the same starting context, it always takes the same path.
+# It never picks a less common word, so the sentences lose variety.
 #
 # TODO 2: Open corpus.txt and ADD 20+ lines in your bot's voice (jokes, advice,
 #   catchphrases). Run it again. Your bot just learned a new personality
@@ -133,8 +139,14 @@ if __name__ == "__main__":
 # TODO 3: Set N = 3. Sentences should sound more natural but repeat the
 #   corpus more. Why? (Hint: with 2 words of context, there are far fewer
 #   possible next words.)
+# Answer: A two-word context is more specific than a one-word context, so
+# the model is more likely to stay on a path it saw in the corpus. That
+# can make replies sound more natural, but it also makes copying more likely.
 #
 # THINK: What would happen if corpus.txt had 10 MILLION lines instead of 38?
 #   What if it had your whole class's chat history? What new problems appear?
-#
-# SHOWCASE: Pick your best 3 minutes of conversation to show the class.
+# Answer: Ten million lines could teach more patterns, but this version
+# stores the text and every observed transition, so it would use much more
+# memory and take longer to build. Class chats might teach inside jokes, but
+# the bot could repeat private details, insults, or other things classmates
+# never agreed to share. I'd stick to text written for the project.

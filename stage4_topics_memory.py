@@ -13,11 +13,14 @@ Run it:   python stage4_topics_memory.py
 import random
 
 from chat_loop import run_chat
-from persona import RESPONSES, DEFAULT_RESPONSES, RIFF_TEMPLATES, REFLECTIONS, TOPIC_GROUPS
+from persona import RESPONSES, DEFAULT_RESPONSES, REFLECTIONS, TOPIC_GROUPS
 from stage2_word_lists import clean_words
-from stage3_important_word import find_important_word
+from stage3_important_word import find_important_word, riff_on
 
 remembered = []     # important words from earlier in the conversation
+recalled = set()    # words the bot has already brought back up
+mood_counts = {"sad": 0, "happy": 0}
+last_mood = None
 
 
 # ---------------------------------------------------------------------------
@@ -42,13 +45,17 @@ def reflect(words):
     #   Build a new list called `swapped`. For each word: if it is a key in
     #   REFLECTIONS, add REFLECTIONS[word]; otherwise add the word itself.
     #   Then return " ".join(swapped).
-    return " ".join(words)
+    swapped = []
+    for word in words:
+        swapped.append(REFLECTIONS.get(word, word))
+    return " ".join(swapped)
 
 
 # ---------------------------------------------------------------------------
 # The brain
 # ---------------------------------------------------------------------------
 def get_reply(user_input):
+    global last_mood
     words = clean_words(user_input)
     important = find_important_word(words)
 
@@ -56,11 +63,30 @@ def get_reply(user_input):
     if important is not None:
         remembered.append(important)
 
+    # Track mood separately so a topic like school cannot hide a mood word.
+    mood = None
+    for word in words:
+        for mood_name in mood_counts:
+            if word in TOPIC_GROUPS[mood_name]:
+                mood = mood_name
+    if mood is not None:
+        mood_counts[mood] += 1
+        previous_mood = last_mood
+        last_mood = mood
+        if previous_mood is not None and previous_mood != mood:
+            if mood == "happy":
+                return "That sounds more upbeat than before. What changed?"
+            return "That sounds like a tougher turn than before. Want to talk about it?"
+
     # TODO 2 (memory callback): every so often, bring up something from earlier.
     #   Fill in the blank so the bot picks a RANDOM old word (not just the first).
     if len(remembered) >= 3 and random.random() < 0.25:
-        old_word = remembered[0]      # <- TODO: use random.choice on remembered[:-1]
-        return f"Earlier you mentioned {old_word}. Does that connect to this?"
+        earlier = remembered[:-1] if important is not None else remembered
+        choices = [word for word in earlier if word not in recalled and word not in words]
+        if choices:
+            old_word = random.choice(choices)
+            recalled.add(old_word)
+            return f"Earlier you mentioned {old_word}. Does that connect to this?"
 
     # Topic groups first
     topic = find_topic(words)
@@ -73,7 +99,7 @@ def get_reply(user_input):
 
     # Riff on the important word
     if important is not None:
-        return random.choice(RIFF_TEMPLATES).format(word=important)
+        return riff_on(important)
 
     return random.choice(DEFAULT_RESPONSES)
 
@@ -91,10 +117,17 @@ if __name__ == "__main__":
 # CHECKPOINT: type "I am nervous about the dance". Is the reply grammatical?
 #   Now type "I hate my homework". Why did you get a DIFFERENT kind of reply?
 #   (Hint: look at the ORDER of the rules in get_reply. Order matters!)
+# Answer: Yes: "Why do you say you are nervous about the dance?" The second
+# sentence matches the school group via "homework". The bot returns a school
+# reply before it checks whether it should swap pronouns.
 #
 # THINK (this is the big idea behind word2vec): you just typed lists of words
 #   that "mean the same thing" BY HAND. What if a program could LEARN those
 #   groups by reading millions of sentences? Your teacher will discuss this.
+# Answer: Words like "mom" and "dad" often show up around similar words,
+# such as "my" and "parents". A model could learn that their contexts are
+# similar without a hand-written list. Similar contexts don't always mean
+# identical meanings: even opposites like "happy" and "sad" can be neighbors.
 #
 # CHALLENGE 1: Don't let the memory callback repeat the same old word twice.
 # CHALLENGE 2: Add a mood tracker: count how many "sad" topics vs "happy"

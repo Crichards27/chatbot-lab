@@ -22,12 +22,22 @@ from stage2_word_lists import clean_words   # reuse your Stage 2 function!
 def find_important_word(words):
     """Return the most important word in the list, or None if there is none.
 
-    VERSION 1 (works now): the first word that is not a boring stop word.
+    VERSION 3: score each word by length, topic, and position.
     """
-    for word in words:
-        if word not in STOP_WORDS:
-            return word
-    return None
+    best = None
+    best_score = 0
+    for index, word in enumerate(words):
+        if word in STOP_WORDS:
+            continue
+        score = len(word)
+        if word in RESPONSES:
+            score += 2
+        if index == len(words) - 1:
+            score += 2  # The end often names what the sentence is about.
+        if score > best_score:
+            best = word
+            best_score = score
+    return best
 
     # TODO 1 (VERSION 2): "first word" is not always the best word.
     #   Change the function so it returns the LONGEST word that is not a stop
@@ -37,6 +47,26 @@ def find_important_word(words):
     # TODO 2 (VERSION 3): invent your own scoring. For example: +2 points if
     #   the word is a key in RESPONSES, +1 point per letter over 5, -1 point
     #   if it appears in the first position. Highest score wins.
+
+
+def find_longest_word(words):
+    """Version 2: pick the longest word that is not a stop word."""
+    best = None
+    for word in words:
+        if word not in STOP_WORDS and (best is None or len(word) > len(best)):
+            best = word
+    return best
+
+
+last_template = None
+
+
+def riff_on(word):
+    """Ask about the word without using the same template twice in a row."""
+    global last_template
+    choices = [template for template in RIFF_TEMPLATES if template != last_template]
+    last_template = random.choice(choices)
+    return last_template.format(word=word)
 
 
 def get_reply(user_input):
@@ -50,8 +80,7 @@ def get_reply(user_input):
     # Step 2: riff on the important word
     important = find_important_word(words)
     if important is not None:
-        template = random.choice(RIFF_TEMPLATES)
-        return template.format(word=important)
+        return riff_on(important)
 
     # Step 3: nothing useful
     return random.choice(DEFAULT_RESPONSES)
@@ -72,6 +101,9 @@ if __name__ == "__main__":
 #
 # CHECKPOINT: type "my teacher assigned a gigantic project".
 #   Which word did your bot pick? Is that the word YOU would have picked?
+# Answer: It picked "project". The two-point bonus for being last beat the
+# longer words "assigned" and "gigantic". I'd pick "project" too because it
+# names the thing the teacher assigned. The longest-word version picked "assigned".
 #
 # CHALLENGE: The bot sometimes uses the same template twice in a row. Keep a
 #   variable called `last_template` and make sure the bot picks a different one.

@@ -27,12 +27,16 @@ def get_reply(user_input):
     """The bot's brain: take the user's text, return a reply (a string)."""
     words = clean_words(user_input)
 
+    topics = []
     for word in words:
-        if word in RESPONSES:
-            return random.choice(RESPONSES[word])
+        if word in RESPONSES and word not in topics:
+            topics.append(word)
             # TODO 2: What if the user mentions TWO topics ("school and sports")?
             # Right now the bot only answers the FIRST one. Could you collect
             # all the topics in a list instead, and then pick one at random?
+    if topics:
+        topic = random.choice(topics)
+        return random.choice(RESPONSES[topic])
 
     return random.choice(DEFAULT_RESPONSES)
 
@@ -52,6 +56,10 @@ if __name__ == "__main__":
 #
 # CHECKPOINT: type "this is hard". Does the bot still say "Hello"? (It should
 #             not. Why is that fixed now?)
+# Answer: No. The words are "this", "is", and "hard". The bot looks up whole
+# words, so it never sees "hi" inside "this" as a word of its own.
 #
 # THINK: type "I love my mom". The bot ignores "mom". Why? How could we teach
 #        it that "mom" belongs with "family"? (Stage 4 answers this.)
+# Answer: Only "family" is a topic key. A word group can map "mom" (and
+# related words like "dad" and "sister") to the "family" replies.

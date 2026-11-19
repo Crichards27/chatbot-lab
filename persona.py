@@ -12,7 +12,7 @@ Other files borrow this data with an import, like:
 # ---------------------------------------------------------------------------
 # BASICS
 # ---------------------------------------------------------------------------
-BOT_NAME = "Dr. Byte"  # TODO: rename your bot!
+BOT_NAME = "Janus"  # TODO: rename your bot!
 
 GREETING = "Hello, I am {name}. Tell me what is on your mind."
 FAREWELL = "Goodbye. It was nice talking with you."
@@ -59,6 +59,31 @@ RESPONSES = {
         "What do you like most about your friends?",
         "Do your friends feel the same way?",
     ],
+    "music": [
+        "What song should I add to the flight playlist?",
+        "What's a song you never skip?",
+        "If your day had a soundtrack, what would the first track be?",
+    ],
+    "art": [
+        "If you could paint a mural on the ship, what would it look like?",
+        "Do you plan what you're making or see where the pencil takes you?",
+        "What's the last thing you made that surprised you?",
+    ],
+    "books": [
+        "What book would you bring on a long flight?",
+        "Which character would you trust to land the ship?",
+        "What kind of story keeps you up past bedtime?",
+    ],
+    "pets": [
+        "Does your pet have a name or a title, like Captain Socks?",
+        "What's the weirdest thing your pet does?",
+        "Could your pet be trusted with the ship's snack drawer?",
+    ],
+    "space": [
+        "What would you visit first if you had a spaceship?",
+        "Would you rather see Saturn up close or walk on the Moon?",
+        "What would you name a planet if you found one?",
+    ],
 }
 
 DEFAULT_RESPONSES = [
@@ -82,6 +107,8 @@ STOP_WORDS = {
     "have", "has", "had", "will", "would", "can", "could", "just", "very",
     "really", "not", "no", "yes", "like", "get", "got", "im", "dont", "its",
     "what", "when", "why", "how", "who", "there", "here", "then", "than",
+    "actually", "basically", "literally", "maybe", "quite", "pretty", "also",
+    "still", "even", "too", "some", "any",
 }
 
 RIFF_TEMPLATES = [
@@ -91,6 +118,11 @@ RIFF_TEMPLATES = [
     "What comes to mind when you think about {word}?",
     "Let's talk about {word}. What happened?",
     "Is {word} something you think about often?",
+    "Mission log entry: {word}. What should I write next?",
+    "My radar picked up '{word}'. What's the story there?",
+    "The flight crew wants to know: how did {word} come up?",
+    "If I added {word} to the ship's log, what detail shouldn't I leave out?",
+    "I don't have a button for {word}. Can you explain it to me?",
 ]
 
 # ---------------------------------------------------------------------------
@@ -112,12 +144,25 @@ REFLECTIONS = {
 # This is a hand-made version of "words that mean similar things".
 # TODO: add more words to every group, and add groups for your new topics.
 TOPIC_GROUPS = {
-    "family": ["family", "mom", "mother", "dad", "father", "parents", "sister", "brother"],
-    "school": ["school", "homework", "teacher", "class", "test", "exam", "grade", "grades"],
-    "sports": ["sports", "wrestling", "soccer", "football", "practice", "game", "team", "coach"],
-    "sad": ["sad", "unhappy", "upset", "down", "gloomy", "miserable"],
-    "happy": ["happy", "excited", "glad", "cheerful", "thrilled"],
-    "computer": ["computer", "code", "coding", "python", "laptop", "program", "robot"],
-    "food": ["food", "pizza", "hungry", "dinner", "lunch", "snack", "cooking"],
-    "friends": ["friends", "friend", "buddy", "classmates"],
+    "family": ["family", "mom", "mother", "dad", "father", "parents", "sister", "brother",
+               "cousin", "aunt", "uncle", "grandma", "grandpa", "siblings"],
+    "school": ["school", "homework", "teacher", "class", "test", "exam", "grade", "grades",
+               "quiz", "classroom", "assignment", "semester", "recess", "studying"],
+    "sports": ["sports", "wrestling", "soccer", "football", "practice", "game", "team", "coach",
+               "basketball", "baseball", "volleyball", "tennis", "tournament", "swimming"],
+    "sad": ["sad", "unhappy", "upset", "down", "gloomy", "miserable", "blue", "lonely",
+            "discouraged", "disappointed", "heartbroken"],
+    "happy": ["happy", "excited", "glad", "cheerful", "thrilled", "joyful", "delighted",
+              "pleased", "jubilant", "ecstatic"],
+    "computer": ["computer", "code", "coding", "python", "laptop", "program", "robot",
+                 "keyboard", "software", "debugging", "algorithm", "screen", "hardware"],
+    "food": ["food", "pizza", "hungry", "dinner", "lunch", "snack", "cooking",
+             "breakfast", "sandwich", "pasta", "recipe", "dessert", "soup"],
+    "friends": ["friends", "friend", "buddy", "classmates", "bestie", "pal", "buddies",
+                "friendship", "pals"],
+    "music": ["music", "song", "songwriter", "playlist", "guitar", "drums", "concert"],
+    "art": ["art", "drawing", "painting", "sketch", "mural", "watercolor", "sculpture"],
+    "books": ["books", "book", "novel", "reading", "author", "chapter", "paperback"],
+    "pets": ["pets", "pet", "puppy", "dog", "cat", "kitten", "hamster"],
+    "space": ["space", "planet", "moon", "orbit", "rocket", "astronaut", "spaceship"],
 }
